@@ -1,0 +1,25 @@
+.sidebar-transition {
+  transition: width 0.7s ease-in-out;
+}
+.content-transition {
+  transition: margin-left 0.7s ease-in-out;
+}
+.collapsible-text {
+  white-space: nowrap;
+  opacity: 1;
+  transition: opacity 0.8s ease-in-out, transform 0.8s ease-in-out, width 0.8s ease-in-out;
+  overflow: hidden;
+  width: auto;
+}
+.sidebar-collapsed .collapsible-text {
+  opacity: 0;
+  transform: scale(0.8);
+  width: 0;
+  justify-content: center;
+}
+.sidebar-collapsed-margin {
+  margin-left: 4.5rem !important;
+}
+.sidebar-full-width-margin {
+  margin-left: 16rem !important;
+}
