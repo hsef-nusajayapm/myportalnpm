@@ -18,12 +18,15 @@ export default function HomePage() {
           {activeMenu === "dashboard" && <div className="bg-white rounded p-4 shadow min-h-screen">📊 Grafik dashboard</div>}
           {activeMenu === "formPortal" && (
             <div className="bg-white rounded p-4 shadow min-h-screen">
-              <iframe src="https://tally.so/embed/mOqMG7?transparentBackground=1&dynamicHeight=1" className="w-full min-h-[500px]" frameBorder="0"></iframe>
+              <div className="container mx-auto max-w-4xl">
+                <iframe src="https://tally.so/embed/mOqMG7?alignLeft=1&transparentBackground=1" className="w-full min-h-[500px]" frameBorder="0"></iframe>
+              </div>
+              
             </div>
           )}
-          {activeMenu === "formCommissioning" && <div className="bg-white rounded p-4 shadow">Form Commissioning</div>}
-          {activeMenu === "formEscort" && <div className="bg-white rounded p-4 shadow">Form Escort</div>}
-          {activeMenu === "visitor" && <div className="bg-white rounded p-4 shadow">Visitor</div>}
+          {activeMenu === "formCommissioning" && <div className="bg-white rounded p-4 shadow min-h-screen">Form Commissioning</div>}
+          {activeMenu === "formEscort" && <div className="bg-white rounded p-4 shadow min-h-screen">Form Escort</div>}
+          {activeMenu === "visitor" && <div className="bg-white rounded p-4 shadow min-h-screen">Visitor</div>}
         </main>
         <Footer />
       </div>
