@@ -19,9 +19,15 @@ export default function HomePage() {
           {activeMenu === "formPortal" && (
             <div className="bg-white rounded p-4 shadow min-h-screen">
               <div className="container mx-auto max-w-4xl">
-                <iframe src="https://tally.so/embed/mOqMG7?alignLeft=1&transparentBackground=1" className="w-full min-h-[500px]" frameBorder="0"></iframe>
+                <div className="relative w-full" style={{ paddingBottom: "80vh" }}>
+                  <iframe
+                    src="https://tally.so/embed/mOqMG7?alignLeft=1&transparentBackground=1&dynamicHeight=1"
+                    className="w-full min-h-[800px] rounded"
+                    frameBorder="0"
+                    title="Form Portal"
+                  ></iframe>
+                </div>
               </div>
-              
             </div>
           )}
           {activeMenu === "formCommissioning" && <div className="bg-white rounded p-4 shadow min-h-screen">Form Commissioning</div>}
