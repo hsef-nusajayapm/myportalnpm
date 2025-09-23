@@ -60,7 +60,7 @@ export default function LoginPage() {
       <div className="flex items-center justify-center px-6">
         {/* Carousel */}
         <div className="grid grid-cols-1 md:grid-cols-2 rounded-lg container mx-auto max-w-3xl bg-white shadow-2xl overflow-hidden">
-          <div className="hidden md:block col-span-1 bg-cover bg-center h-full min-h-[470px] relative overflow-hidden">
+          <div className="hidden md:block col-span-1 bg-cover bg-center h-full min-h-[400px] relative overflow-hidden">
             <CarouselLogin  />
           </div>
           {/* Form */}
