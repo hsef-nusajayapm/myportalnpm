@@ -1,5 +1,6 @@
 "use client";
 import React from "react";
+import Image from "next/image";
 
 export default function CarouselLogin() {
   const images = ["/img/img1.jpg", "/img/img2.jpg", "/img/img3.jpg"];
@@ -20,13 +21,17 @@ export default function CarouselLogin() {
         style={{ transform: `translateX(-${index * 100}%)` }}
       >
         {images.map((src, i) => (
-          <img
-            key={i}
-            src={src}
-            alt={`slide-${i}`}
-            className="w-full flex-shrink-0 object-cover h-full"
-          />
-        ))}
+         <div key={i} className="relative w-full flex-shrink-0 h-[470px]"> 
+            {/* h-[470px] ini tinggi fix supaya fill punya referensi */}
+            <Image
+              src={src}
+              alt={`slide-${i}`}
+              fill
+              className="object-cover"
+              priority={i === 0}
+            />
+          </div>
+        ))}                         
       </div>
 
       {/* optional: indikator bulatan */}

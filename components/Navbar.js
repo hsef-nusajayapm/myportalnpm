@@ -1,4 +1,5 @@
 "use client";
+import Image from "next/image";
 
 export default function Navbar({ toggleSidebar }) {
   return (
@@ -8,7 +9,13 @@ export default function Navbar({ toggleSidebar }) {
           <button onClick={toggleSidebar} className="text-gray-700 items-center px-4 focus:outline-none md:hidden mr-2">
             <i className="fas fa-bars text-xl"></i>
           </button>
-          <img src="./img/Logo NPM-01 PNG.svg" alt="logo" className="w-30 bg-amber-50 rounded-md ml-3 flex-shrink-0 items-center" />
+          <Image
+            src="/img/Logo NPM-01 PNG.svg" // pastikan path di /public/img
+            alt="logo"
+            width={120} // sesuaikan ukuran logo
+            height={40} // sesuaikan tinggi logo
+            className="bg-amber-50 rounded-md ml-3 flex-shrink-0 items-center"
+          />
           <p className="ml-2 text-xl md:text-2xl text-white hidden md:block">NUSAJAYA</p>
           <strong className="text-lg md:text-2xl ml-1 text-white hidden md:block"> PERSADATAMA MANDIRI</strong>
         </div>
