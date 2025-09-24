@@ -29,7 +29,7 @@ export default function HomePage() {
             <div className="bg-white rounded p-4 shadow min-h-screen">
               <div className="container mx-auto max-w-3xl">
                   <iframe
-                    src="https://tally.so/embed/mOqMG7?alignLeft=1&transparentBackground=1&dynamicHeight=1"
+                    src="https://tally.so/embed/mOqMG7?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1"
                     className="w-full"
                     frameBorder="0"
                     title="Form Portal"
