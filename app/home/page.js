@@ -4,6 +4,7 @@ import Sidebar from "../../components/sidebar";
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
 import styles from "./page.module.css";
+import Script from 'next/script';
 
 export default function HomePage() {
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -28,13 +29,15 @@ export default function HomePage() {
           {activeMenu === "formPortal" && (
             <div className="bg-white rounded p-4 shadow min-h-screen">
               <div className="container mx-auto max-w-3xl">
-                  <iframe
-                    src="https://tally.so/embed/mOqMG7?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1"
-                    className="w-full"
-                    frameBorder="0"
-                    title="Form Portal"
-                  ></iframe>
+                  <iframe data-tally-src="https://tally.so/embed/mOqMG7?alignLeft=1&transparentBackground=1&dynamicHeight=1" loading="lazy" width="100%" height="1876" frameBorder="0" marginHeight="0" marginWidth="0" title="PORTAL NPM"></iframe>
               </div>
+              <Script
+                id="tally-js"
+                src="https://tally.so/widgets/embed.js"
+                onLoad={() => {
+                    Tally.loadEmbeds();
+                }}
+            />
             </div>
           )}
           {activeMenu === "formCommissioning" && <div className="bg-white rounded p-4 shadow min-h-screen">Form Commissioning</div>}
