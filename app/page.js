@@ -21,7 +21,7 @@ export default function LoginPage() {
   }, [router]);
 
   // URL Web App Google Apps Script
-  const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwZWtr1i91W6hUOoIqUtJFmPYoflmyoFVohKTeMM4YsyL-E_L15TsjKdbkTmG-H98st/exec";
+  const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzY-TAseFX3VWfH4wbu7N9oKcE6h0CyKHWXYluHVxcHm_s704kECE1sAE6aQFslP-kF/exec";
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -37,7 +37,9 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      const res = await fetch(`${WEB_APP_URL}?action=login&email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`);
+      const res = await fetch(
+      `${WEB_APP_URL}?action=login&email=${encodeURIComponent(email.toLowerCase().trim())}&password=${encodeURIComponent(password.trim())}`
+      );
       const result = await res.json();
 
       if (result.success) {
@@ -57,14 +59,14 @@ export default function LoginPage() {
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500">
-      <div className="flex items-center justify-center px-6">
+      <div className="flex items-center justify-center shadow-xl animate-float">
         {/* Carousel */}
-        <div className="grid grid-cols-1 md:grid-cols-2 rounded-lg container mx-auto max-w-3xl bg-white shadow-2xl overflow-hidden">
-          <div className="hidden md:block col-span-1 bg-cover bg-center h-full min-h-[400px] relative overflow-hidden">
+        <div className="grid grid-cols-1 md:grid-cols-2 rounded-lg container mx-auto max-w-2xl bg-white shadow-2xl overflow-hidden">
+          <div className="hidden md:block col-span-1 bg-cover bg-center h-full relative overflow-hidden">
             <CarouselLogin  />
           </div>
           {/* Form */}
-          <div className="col-span-1 p-8 flex-col justify-center md:p-10">
+          <div className="col-span-1 p-6 flex-col justify-center md:p-8">
             <h2 className="text-2xl font-bold mb-0.5 text-gray-800 text-center">Hello!👋, Welcome to</h2>
             <h2 className="text-xl font-semibold mb-8 text-gray-800 text-center">Nusajaya Persadatama Mandiri</h2>
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -101,7 +103,7 @@ export default function LoginPage() {
                 </label>
               </div>
 
-              <div className="w-full lg:w-1/2 lg:mx-auto grid-cols-1 lg:grid-cols-2">
+              <div className="w-full lg:w-1/2 lg:mx-auto grid-cols-1 lg:grid-cols-2 pt-3">
                 {!loading ? (
                   <button
                     type="submit"
@@ -110,7 +112,7 @@ export default function LoginPage() {
                     Login
                   </button>
                 ) : (
-                  <button type="button" className="bg-indigo-600 py-3 font-semibold rounded-full w-full text-white items-center justify-center" disabled>
+                  <button type="button" className="bg-indigo-600 py-4 font-semibold rounded-full w-full text-white items-center justify-center" disabled>
                     <svg aria-hidden="true" role="status" className="inline w-4 h-4 me-3 text-gray-200 animate-spin" viewBox="0 0 100 101" fill="none">
                       <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908Z" fill="currentColor" />
                     </svg>

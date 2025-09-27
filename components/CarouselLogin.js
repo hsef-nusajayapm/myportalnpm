@@ -14,14 +14,14 @@ export default function CarouselLogin() {
   }, [images.length]);
 
   return (
-    <div className="relative w-full h-full min-h-[470px] overflow-hidden">
+    <div className="relative w-full h-full min-h-[300px] overflow-hidden">
       {/* wrapper yang digeser */}
       <div
         className="flex h-full transition-transform duration-700 ease-in-out"
         style={{ transform: `translateX(-${index * 100}%)` }}
       >
         {images.map((src, i) => (
-         <div key={i} className="relative w-full flex-shrink-0 h-[470px]"> 
+         <div key={i} className="relative w-full flex-shrink-0 h-full min-h-[300px]"> 
             {/* h-[470px] ini tinggi fix supaya fill punya referensi */}
             <Image
               src={src}
