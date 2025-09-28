@@ -68,7 +68,7 @@ export default function LoginPage() {
           {/* Form */}
           <div className="col-span-1 p-6 flex-col justify-center md:p-8">
             <h2 className="text-2xl font-bold mb-0.5 text-gray-800 text-center">Hello!👋, Welcome to</h2>
-            <h2 className="text-xl font-semibold mb-8 text-gray-800 text-center">Nusajaya Persadatama Mandiri</h2>
+            <h2 className="text-xl font-semibold mb-6 text-gray-800 text-center">Nusajaya Persadatama Mandiri</h2>
             <form onSubmit={handleSubmit} className="space-y-4">
               {/* Email */}
               <div className="mb-6 relative">
@@ -76,7 +76,7 @@ export default function LoginPage() {
                 <input
                   type="email"
                   placeholder="Email"
-                  className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-black"
+                  className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-black"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                 />
@@ -87,7 +87,7 @@ export default function LoginPage() {
                 <input
                   type={showPassword ? "text" : "password"}
                   placeholder="Password"
-                  className="w-full pl-12 pr-12 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-black"
+                  className="w-full pl-12 pr-12 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-black"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                 />
@@ -116,7 +116,7 @@ export default function LoginPage() {
                     <svg aria-hidden="true" role="status" className="inline w-4 h-4 me-3 text-gray-200 animate-spin" viewBox="0 0 100 101" fill="none">
                       <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908Z" fill="currentColor" />
                     </svg>
-                    Processing…
+                    Loading…
                   </button>
                 )}
               </div>

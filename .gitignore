@@ -39,3 +39,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# --- Service Account & Script (sensitif) ---
+credentials.json
+service_account.b64
+encode-sa.sh
+
