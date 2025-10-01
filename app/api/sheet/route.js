@@ -11,19 +11,19 @@ export async function GET() {
     if (!serviceAccountBase64 || !spreadsheetId) {
       return new Response(
         JSON.stringify({ error: "Missing service account or spreadsheet ID" }),
-        { status: 500, headers: { "Content-Type": "application/json" } }
+        { status: 500, headers: { "Content-Type": "application/json" } },
       );
     }
 
     // decode base64 → object JSON
     const serviceAccountJson = JSON.parse(
-      Buffer.from(serviceAccountBase64, "base64").toString("utf-8")
+      Buffer.from(serviceAccountBase64, "base64").toString("utf-8"),
     );
 
     // pastikan private_key punya newline
     serviceAccountJson.private_key = serviceAccountJson.private_key.replace(
       /\\n/g,
-      "\n"
+      "\n",
     );
 
     // auth
@@ -50,7 +50,9 @@ export async function GET() {
     }
 
     // header + rows
-    const headers = values[0].map((h, i) => (h ? String(h).trim() : `col_${i}`));
+    const headers = values[0].map((h, i) =>
+      h ? String(h).trim() : `col_${i}`,
+    );
     const rows = values.slice(1).map((r) => {
       const obj = {};
       headers.forEach((h, i) => {

@@ -7,7 +7,10 @@
 .collapsible-text {
   white-space: nowrap;
   opacity: 1;
-  transition: opacity 0.8s ease-in-out, transform 0.8s ease-in-out, width 0.8s ease-in-out;
+  transition:
+    opacity 0.8s ease-in-out,
+    transform 0.8s ease-in-out,
+    width 0.8s ease-in-out;
   overflow: hidden;
   width: auto;
 }
