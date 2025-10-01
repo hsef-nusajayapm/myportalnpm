@@ -16,7 +16,7 @@ export const metadata = {
   title: "Portal NPM",
   description: "Portal NPM with Next.js",
   icons: {
-    icon: "/myportalnpm/public/img/cricleNPM-01.svg", // ganti sesuai nama file di /public
+    icon: "img/cricleNPM-01.svg", // ganti sesuai nama file di /public
   },
 };
 
