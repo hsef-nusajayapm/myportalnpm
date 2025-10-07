@@ -4,18 +4,15 @@ import * as React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ChevronDown } from "lucide-react";
-
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { cn } from "@/lib/utils";
 
-export function NavMain({ items }) {
+export function NavMain({ items, isCollapsed }) {
   const pathname = usePathname();
   const [open, setOpen] = React.useState({});
   const [mounted, setMounted] = React.useState(false);
 
-  React.useEffect(() => {
-    setMounted(true);
-  }, []);
+  React.useEffect(() => setMounted(true), []);
 
   const toggleSection = (title) => {
     setOpen((prev) => ({ ...prev, [title]: !prev[title] }));
@@ -30,27 +27,31 @@ export function NavMain({ items }) {
             open={open[item.title]}
             onOpenChange={() => toggleSection(item.title)}
           >
-            <div className="hover:text-accent-foreground flex items-center justify-between rounded-md px-3 py-2 text-sm">
+            <div
+              className={cn(
+                "hover:text-accent-foreground flex items-center justify-between rounded-md px-3 py-2 text-sm",
+                mounted && pathname === item.url && "bg-accent text-accent-foreground"
+              )}
+            >
               {/* Klik judul → ke halaman utama */}
-              <Link
-                href={item.url || "#"}
-                className={cn(
-                  "flex flex-1 items-center gap-2",
-                  mounted && pathname === item.url && "bg-dark text-accent-foreground"
-                )}
-              >
+              <Link href={item.url || "#"} className="flex flex-1 items-center gap-2">
                 {item.icon && <item.icon className="h-4 w-4" />}
-                <span>{item.title}</span>
+                {!isCollapsed && <span>{item.title}</span>}
               </Link>
 
-              {/* Klik panah → expand/collapse */}
-              <CollapsibleTrigger asChild>
-                <button className="ml-2">
-                  <ChevronDown
-                    className={cn("h-4 w-4 transition-transform", open[item.title] && "rotate-180")}
-                  />
-                </button>
-              </CollapsibleTrigger>
+              {/* Tombol expand/collapse */}
+              {!isCollapsed && (
+                <CollapsibleTrigger asChild>
+                  <button className="ml-2">
+                    <ChevronDown
+                      className={cn(
+                        "h-4 w-4 transition-transform",
+                        open[item.title] && "rotate-180"
+                      )}
+                    />
+                  </button>
+                </CollapsibleTrigger>
+              )}
             </div>
 
             {/* Submenu */}
@@ -65,7 +66,7 @@ export function NavMain({ items }) {
                       mounted && pathname === sub.url && "bg-accent text-accent-foreground"
                     )}
                   >
-                    {sub.title}
+                    {!isCollapsed && sub.title}
                   </Link>
                 ))}
               </div>
@@ -81,7 +82,7 @@ export function NavMain({ items }) {
             )}
           >
             {item.icon && <item.icon className="h-4 w-4" />}
-            <span>{item.title}</span>
+            {!isCollapsed && <span>{item.title}</span>}
           </Link>
         )
       )}

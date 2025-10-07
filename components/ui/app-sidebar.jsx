@@ -14,11 +14,14 @@ import {
   SidebarFooter,
   SidebarHeader,
   SidebarRail,
+  useSidebar,
 } from "@/components/ui/sidebar";
 
 export function AppSidebar(props) {
   const router = useRouter();
   const [user, setUser] = useState(null);
+  const { state } = useSidebar();
+  const isCollapsed = state === "collapsed";
 
   useEffect(() => {
     const isLoggedIn = sessionStorage.getItem("isLoggedIn");
@@ -81,7 +84,7 @@ export function AppSidebar(props) {
 
       {/* Navigation */}
       <SidebarContent>
-        <NavMain items={navMain} />
+        <NavMain isCollapsed={isCollapsed} items={navMain} />
       </SidebarContent>
 
       {/* Footer: User Info */}
