@@ -30,30 +30,19 @@ export function NavMain({ items }) {
             open={open[item.title]}
             onOpenChange={() => toggleSection(item.title)}
           >
-            <div className="hover:bg-accent hover:text-accent-foreground flex items-center justify-between rounded-md px-3 py-2 text-sm">
-              {/* Klik judul → ke halaman utama */}
-              <Link
-                href={item.url || "#"}
-                className={cn(
-                  "flex flex-1 items-center gap-2",
-                  mounted && pathname === item.url && "text-accent-foreground"
-                )}
-              >
+            <CollapsibleTrigger className="hover:bg-accent hover:text-accent-foreground flex w-full items-center justify-between rounded-md px-3 py-2 text-sm">
+              <div className="flex items-center gap-2">
                 {item.icon && <item.icon className="h-4 w-4" />}
-                <span>{item.title}</span>
-              </Link>
-
-              {/* Klik panah → expand/collapse */}
-              <CollapsibleTrigger asChild>
-                <button className="ml-2">
-                  <ChevronDown
-                    className={cn("h-4 w-4 transition-transform", open[item.title] && "rotate-180")}
-                  />
-                </button>
-              </CollapsibleTrigger>
-            </div>
-
-            {/* Submenu */}
+                {/* hide text if sidebar collapsed */}
+                <span className="group-data-[collapsible=icon]:hidden">{item.title}</span>
+              </div>
+              <ChevronDown
+                className={cn(
+                  "h-4 w-4 transition-transform group-data-[collapsible=icon]:hidden",
+                  open[item.title] && "rotate-180"
+                )}
+              />
+            </CollapsibleTrigger>
             <CollapsibleContent className="pl-6">
               <div className="flex flex-col space-y-1">
                 {item.items.map((sub) => (
@@ -61,7 +50,7 @@ export function NavMain({ items }) {
                     key={sub.title}
                     href={sub.url}
                     className={cn(
-                      "hover:bg-accent hover:text-accent-foreground rounded-md px-3 py-1.5 text-sm",
+                      "hover:bg-accent hover:text-accent-foreground rounded-md px-3 py-1.5 text-sm group-data-[collapsible=icon]:hidden",
                       mounted && pathname === sub.url && "bg-accent text-accent-foreground"
                     )}
                   >
@@ -81,7 +70,8 @@ export function NavMain({ items }) {
             )}
           >
             {item.icon && <item.icon className="h-4 w-4" />}
-            <span>{item.title}</span>
+            {/* hide text if sidebar collapsed */}
+            <span className="group-data-[collapsible=icon]:hidden">{item.title}</span>
           </Link>
         )
       )}

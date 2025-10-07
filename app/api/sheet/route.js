@@ -148,9 +148,11 @@ export async function GET(req) {
     }
 
     // hitung agregasi
+    // hitung agregasi
     const result = aggregateData(rows, headers);
 
-    return new Response(JSON.stringify(result), {
+    // sertakan data mentah juga biar frontend bisa pakai
+    return new Response(JSON.stringify({ ...result, headers, rows, raw: { headers, rows } }), {
       headers: {
         "Content-Type": "application/json",
         "Cache-Control": "public, s-maxage=300, stale-while-revalidate=600",

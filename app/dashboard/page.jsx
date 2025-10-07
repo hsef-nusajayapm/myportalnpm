@@ -14,29 +14,46 @@ export default function DashboardPage() {
 
   useEffect(() => {
     async function fetchData() {
+      // 1) fetch agregasi (dipakai untuk cards)
       const res = await fetch("/api/sheet");
       const json = await res.json();
       setData(json);
 
       // --- Total Karyawan ---
-      const karyawan = Object.values(json.perusahaanJumlah).reduce((a, b) => a + b, 0);
+      const karyawan = Object.values(json.perusahaanJumlah || {}).reduce((a, b) => a + b, 0);
       setTotalKaryawan(karyawan);
 
-      /// --- Total Print (DONE) ---
-      const printDone = json.statusPrint["DONE"] || 0;
+      // --- Total Print (DONE) ---
+      const printDone =
+        (json.statusPrint && (json.statusPrint["DONE"] || json.statusPrint["SUKSES"] || 0)) || 0;
       setTotalPrint(printDone);
 
       // --- Data untuk grafik pengajuan per bulan ---
-      const perBulan = Object.entries(json.jenisPengajuanPerBulan).map(([bulan, jenis]) => ({
+      const perBulan = Object.entries(json.jenisPengajuanPerBulan || {}).map(([bulan, jenis]) => ({
         bulan,
-        total: Object.values(jenis).reduce((a, b) => a + b, 0),
+        total: Object.values(jenis || {}).reduce((a, b) => a + b, 0),
       }));
       setChartData(perBulan);
+
+      // 2) fetch RAW untuk tabel (headers + rows)
+      try {
+        const rawRes = await fetch("/api/sheet?chart=raw", { cache: "no-store" });
+        const rawJson = await rawRes.json();
+        // rawJson mungkin sudah berbentuk { headers, rows } atau { raw: { headers, rows } }
+        const rawForTable = rawJson.raw
+          ? { headers: rawJson.raw.headers, rows: rawJson.raw.rows }
+          : { headers: rawJson.headers, rows: rawJson.rows };
+        // pass rawForTable ke AppTable via setDataTable (atau reuse setData jika mau)
+        setData(rawForTable); // jika kamu mau keep single state, tapi kalau cards memerlukan agregasi, gunakan state lain
+        // Jika kamu butuh tetap menyimpan agregasi di `data`, dan raw di state lain:
+        // setRawData(rawForTable);
+      } catch (e) {
+        console.warn("Gagal ambil raw sheet:", e);
+      }
     }
 
     fetchData();
   }, []);
-
   // --- Helper ---
   const calcTrendValue = (arr) => {
     if (arr.length < 2) return 0;
