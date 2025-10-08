@@ -1,7 +1,8 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import useSWR, { mutate } from "swr";
+import { useMemo } from "react";
+import useSWRMutation from "swr/mutation";
+import { mutate } from "swr";
 import {
   Table,
   TableBody,
@@ -12,13 +13,13 @@ import {
 } from "@/components/ui/table";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 
-/** ---------------- Parse / Format Tanggal (tahan banting) ---------------- **/
+/** ---------------- Parse / Format Tanggal ---------------- **/
 function parseDateFlexible(str) {
   if (!str) return null;
   if (str instanceof Date) return str;
   if (typeof str !== "string") return null;
 
-  const datePart = (str || "").split(" ")[0].trim(); // ambil bagian tanggal sebelum jam
+  const datePart = (str || "").split(" ")[0].trim();
   const parts = datePart
     .split(/[\/\-.]/)
     .map((p) => p.trim())
@@ -54,7 +55,7 @@ function formatDate(value) {
   return `${day}-${month}-${year}`;
 }
 
-/** ---------------- Helper untuk mengambil field dengan beberapa kandidat nama ---------------- **/
+/** ---------------- Ambil field fleksibel ---------------- **/
 function getField(obj = {}, candidates = []) {
   for (const k of candidates) {
     if (!k) continue;
@@ -70,22 +71,12 @@ function getField(obj = {}, candidates = []) {
   return null;
 }
 
-/** ---------------- Komponen utama dengan tombol Refresh ---------------- **/
+/** ---------------- Komponen utama ---------------- **/
 export function AppTable({ data }) {
-  const [isRefreshing, setIsRefreshing] = useState(false);
-
-  const handleRefresh = async () => {
-    try {
-      setIsRefreshing(true);
-      // Revalidate dua endpoint sekaligus
-      await Promise.all([
-        mutate("/api/sheet", undefined, { revalidate: true }),
-        mutate("/api/sheet?chart=raw", undefined, { revalidate: true }),
-      ]);
-    } finally {
-      setIsRefreshing(false);
-    }
-  };
+  // pakai SWR Mutation agar tombol bisa revalidate manual
+  const { trigger, isMutating } = useSWRMutation("refresh-data", async () => {
+    await Promise.all([mutate("/api/sheet"), mutate("/api/sheet?chart=raw")]);
+  });
 
   const normalizedRows = useMemo(() => {
     if (!data) return [];
@@ -147,14 +138,44 @@ export function AppTable({ data }) {
     <Card className="w-full">
       <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle className="text-base md:text-lg">Data Pengajuan Terbaru</CardTitle>
+
+        {/* Tombol Refresh dengan efek tekan dan spinner */}
         <button
-          onClick={handleRefresh}
-          disabled={isRefreshing}
-          className={`rounded-md px-3 py-1 text-xs text-white transition md:text-sm ${
-            isRefreshing ? "cursor-not-allowed bg-gray-400" : "bg-blue-600 hover:bg-blue-700"
+          onClick={trigger}
+          disabled={isMutating}
+          className={`flex items-center gap-2 rounded-md px-3 py-1 text-xs font-medium text-white transition active:scale-95 md:text-sm ${
+            isMutating
+              ? "cursor-not-allowed bg-blue-400"
+              : "bg-blue-600 hover:bg-blue-700 active:bg-blue-800"
           }`}
         >
-          {isRefreshing ? "Refreshing..." : "Refresh Data"}
+          {isMutating ? (
+            <>
+              <svg
+                className="h-4 w-4 animate-spin"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                ></circle>
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                ></path>
+              </svg>
+              Refreshing...
+            </>
+          ) : (
+            "Refresh Data"
+          )}
         </button>
       </CardHeader>
 
