@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ChevronDown } from "lucide-react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 
 export function NavMain({ items, isCollapsed }) {
@@ -20,8 +21,60 @@ export function NavMain({ items, isCollapsed }) {
 
   return (
     <div className="space-y-2 pt-4">
-      {items.map((item) =>
-        item.items ? (
+      {items.map((item) => {
+        if (!item.items) {
+          // Item tanpa submenu
+          return (
+            <Link
+              key={item.title}
+              href={item.url}
+              className={cn(
+                "hover:bg-accent hover:text-accent-foreground flex items-center gap-2 rounded-md px-3 py-2 text-sm",
+                mounted && pathname === item.url && "bg-accent text-accent-foreground"
+              )}
+            >
+              {item.icon && <item.icon className="h-4 w-4" />}
+              {!isCollapsed && <span>{item.title}</span>}
+            </Link>
+          );
+        }
+
+        // Jika ada submenu:
+        if (isCollapsed) {
+          // === Mode COLLAPSED: tampilkan popover saat hover ===
+          return (
+            <Popover key={item.title}>
+              <PopoverTrigger asChild>
+                <button
+                  className={cn(
+                    "hover:bg-accent hover:text-accent-foreground flex w-full items-center justify-center gap-2 rounded-md px-3 py-2 text-sm"
+                  )}
+                >
+                  {item.icon && <item.icon className="h-4 w-4" />}
+                </button>
+              </PopoverTrigger>
+              <PopoverContent side="right" align="start" className="w-48 p-2">
+                <div className="flex flex-col space-y-1">
+                  {item.items.map((sub) => (
+                    <Link
+                      key={sub.title}
+                      href={sub.url}
+                      className={cn(
+                        "hover:bg-accent hover:text-accent-foreground rounded-md px-2 py-1.5 text-sm",
+                        pathname === sub.url && "bg-accent text-accent-foreground"
+                      )}
+                    >
+                      {sub.title}
+                    </Link>
+                  ))}
+                </div>
+              </PopoverContent>
+            </Popover>
+          );
+        }
+
+        // === Mode EXPANDED: gunakan collapsible normal ===
+        return (
           <Collapsible
             key={item.title}
             open={open[item.title]}
@@ -33,28 +86,19 @@ export function NavMain({ items, isCollapsed }) {
                 mounted && pathname === item.url && "bg-accent text-accent-foreground"
               )}
             >
-              {/* Klik judul → ke halaman utama */}
               <Link href={item.url || "#"} className="flex flex-1 items-center gap-2">
                 {item.icon && <item.icon className="h-4 w-4" />}
-                {!isCollapsed && <span>{item.title}</span>}
+                <span>{item.title}</span>
               </Link>
-
-              {/* Tombol expand/collapse */}
-              {!isCollapsed && (
-                <CollapsibleTrigger asChild>
-                  <button className="ml-2">
-                    <ChevronDown
-                      className={cn(
-                        "h-4 w-4 transition-transform",
-                        open[item.title] && "rotate-180"
-                      )}
-                    />
-                  </button>
-                </CollapsibleTrigger>
-              )}
+              <CollapsibleTrigger asChild>
+                <button className="ml-2">
+                  <ChevronDown
+                    className={cn("h-4 w-4 transition-transform", open[item.title] && "rotate-180")}
+                  />
+                </button>
+              </CollapsibleTrigger>
             </div>
 
-            {/* Submenu */}
             <CollapsibleContent className="pl-6">
               <div className="flex flex-col space-y-1">
                 {item.items.map((sub) => (
@@ -63,29 +107,17 @@ export function NavMain({ items, isCollapsed }) {
                     href={sub.url}
                     className={cn(
                       "hover:bg-accent hover:text-accent-foreground rounded-md px-3 py-1.5 text-sm",
-                      mounted && pathname === sub.url && "bg-accent text-accent-foreground"
+                      pathname === sub.url && "bg-accent text-accent-foreground"
                     )}
                   >
-                    {!isCollapsed && sub.title}
+                    {sub.title}
                   </Link>
                 ))}
               </div>
             </CollapsibleContent>
           </Collapsible>
-        ) : (
-          <Link
-            key={item.title}
-            href={item.url}
-            className={cn(
-              "hover:bg-accent hover:text-accent-foreground flex items-center gap-2 rounded-md px-3 py-2 text-sm",
-              mounted && pathname === item.url && "bg-accent text-accent-foreground"
-            )}
-          >
-            {item.icon && <item.icon className="h-4 w-4" />}
-            {!isCollapsed && <span>{item.title}</span>}
-          </Link>
-        )
-      )}
+        );
+      })}
     </div>
   );
 }

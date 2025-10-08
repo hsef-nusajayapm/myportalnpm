@@ -1,6 +1,7 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
+import useSWR, { mutate } from "swr";
 import {
   Table,
   TableBody,
@@ -24,7 +25,6 @@ function parseDateFlexible(str) {
     .filter(Boolean);
 
   if (parts.length === 3) {
-    // jika format YYYY-MM-DD (ISO-ish)
     if (parts[0].length === 4) {
       const y = Number(parts[0]),
         m = Number(parts[1]) - 1,
@@ -33,7 +33,6 @@ function parseDateFlexible(str) {
       return isNaN(dt) ? null : dt;
     }
 
-    // biasa: M/D/YYYY atau MM/DD/YYYY
     const month = Number(parts[0]),
       day = Number(parts[1]),
       year = Number(parts[2]);
@@ -59,7 +58,6 @@ function formatDate(value) {
 function getField(obj = {}, candidates = []) {
   for (const k of candidates) {
     if (!k) continue;
-    // terima juga jika key ada tapi kosong (kembalikan tetap jika bukan empty string?)
     if (
       Object.prototype.hasOwnProperty.call(obj, k) &&
       obj[k] !== undefined &&
@@ -72,26 +70,34 @@ function getField(obj = {}, candidates = []) {
   return null;
 }
 
-/** ---------------- Normalisasi dan Komponen utama ---------------- **/
+/** ---------------- Komponen utama dengan tombol Refresh ---------------- **/
 export function AppTable({ data }) {
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
+  const handleRefresh = async () => {
+    try {
+      setIsRefreshing(true);
+      // Revalidate dua endpoint sekaligus
+      await Promise.all([
+        mutate("/api/sheet", undefined, { revalidate: true }),
+        mutate("/api/sheet?chart=raw", undefined, { revalidate: true }),
+      ]);
+    } finally {
+      setIsRefreshing(false);
+    }
+  };
+
   const normalizedRows = useMemo(() => {
     if (!data) return [];
-
-    // kemungkinan: data.raw.headers + data.raw.rows (array of arrays)
-    // atau: data.headers + data.rows
-    // atau: data.rows (array of objects)
     const headers = (data.raw?.headers || data.headers || []).map((h) =>
       typeof h === "string" ? h.trim() : String(h)
     );
 
     const rowsArr = data.raw?.rows || data.rows || [];
-
     if (!rowsArr || rowsArr.length === 0) return [];
 
-    // buat array of objects => [{ "Nama Lengkap": "...", ... }, ...]
     const rows = rowsArr.map((r) => {
       if (Array.isArray(r)) {
-        // kalau rows adalah array-of-arrays dan kita punya headers -> map ke objek
         if (headers.length) {
           const obj = {};
           headers.forEach((h, i) => {
@@ -99,14 +105,12 @@ export function AppTable({ data }) {
           });
           return obj;
         }
-        // kalau tidak ada headers, fallback jadi c0,c1,...
         const obj = {};
         r.forEach((v, i) => {
           obj[`c${i}`] = v ?? "";
         });
         return obj;
       } else if (r && typeof r === "object") {
-        // kalau sudah object, normalisasi key (trim)
         const obj = {};
         Object.keys(r).forEach((k) => {
           const kk = typeof k === "string" ? k.trim() : String(k);
@@ -124,7 +128,6 @@ export function AppTable({ data }) {
   const rowsFiltered = useMemo(() => {
     if (!normalizedRows || normalizedRows.length === 0) return [];
 
-    // sort berdasarkan Local Submitted at (desc)
     const sorted = [...normalizedRows].sort((a, b) => {
       const aDate =
         parseDateFlexible(
@@ -142,8 +145,17 @@ export function AppTable({ data }) {
 
   return (
     <Card className="w-full">
-      <CardHeader>
+      <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle className="text-base md:text-lg">Data Pengajuan Terbaru</CardTitle>
+        <button
+          onClick={handleRefresh}
+          disabled={isRefreshing}
+          className={`rounded-md px-3 py-1 text-xs text-white transition md:text-sm ${
+            isRefreshing ? "cursor-not-allowed bg-gray-400" : "bg-blue-600 hover:bg-blue-700"
+          }`}
+        >
+          {isRefreshing ? "Refreshing..." : "Refresh Data"}
+        </button>
       </CardHeader>
 
       <CardContent className="overflow-x-auto">
@@ -164,7 +176,6 @@ export function AppTable({ data }) {
             <TableBody>
               {rowsFiltered.length > 0 ? (
                 rowsFiltered.map((row, idx) => {
-                  // Nama: cek "Nama Lengkap" dulu, fallback gabung Nama Depan + Nama Belakang
                   const namaFull = getField(row, ["Nama Lengkap", "Nama", "Full Name", "FullName"]);
                   const namaDepan = getField(row, ["Nama Depan", "First Name", "FirstName"]);
                   const namaBelakang = getField(row, ["Nama Belakang", "Last Name", "LastName"]);

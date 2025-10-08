@@ -1,60 +1,49 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import useSWR from "swr";
+import { useMemo } from "react";
 import { AppBarChart } from "@/components/AppBarChart";
 import { CardSummaryTotal } from "@/components/CardSummaryTotal";
 import { CardSummaryPrint } from "@/components/CardSummaryPrint";
 import { AppTable } from "@/components/AppTable";
 
+// Fungsi fetcher standar untuk SWR
+const fetcher = (url) => fetch(url).then((res) => res.json());
+
 export default function DashboardPage() {
-  const [data, setData] = useState(null);
-  const [totalKaryawan, setTotalKaryawan] = useState(0);
-  const [totalPrint, setTotalPrint] = useState(0);
-  const [chartData, setChartData] = useState([]);
+  // --- Ambil data agregat dan raw ---
+  const { data: aggData, error: aggError } = useSWR("/api/sheet", fetcher, {
+    refreshInterval: 30000, // refresh setiap 30 detik
+  });
 
-  useEffect(() => {
-    async function fetchData() {
-      // 1) fetch agregasi (dipakai untuk cards)
-      const res = await fetch("/api/sheet");
-      const json = await res.json();
-      setData(json);
+  const { data: rawData, error: rawError } = useSWR("/api/sheet?chart=raw", fetcher, {
+    refreshInterval: 60000, // refresh setiap 1 menit
+  });
 
-      // --- Total Karyawan ---
-      const karyawan = Object.values(json.perusahaanJumlah || {}).reduce((a, b) => a + b, 0);
-      setTotalKaryawan(karyawan);
+  // --- Hitung Total & Chart (pakai useMemo agar efisien) ---
+  const totalKaryawan = useMemo(() => {
+    if (!aggData) return 0;
+    return Object.values(aggData.perusahaanJumlah || {}).reduce((a, b) => a + b, 0);
+  }, [aggData]);
 
-      // --- Total Print (DONE) ---
-      const printDone =
-        (json.statusPrint && (json.statusPrint["DONE"] || json.statusPrint["SUKSES"] || 0)) || 0;
-      setTotalPrint(printDone);
+  const totalPrint = useMemo(() => {
+    if (!aggData) return 0;
+    return (
+      (aggData.statusPrint &&
+        (aggData.statusPrint["DONE"] || aggData.statusPrint["SUKSES"] || 0)) ||
+      0
+    );
+  }, [aggData]);
 
-      // --- Data untuk grafik pengajuan per bulan ---
-      const perBulan = Object.entries(json.jenisPengajuanPerBulan || {}).map(([bulan, jenis]) => ({
-        bulan,
-        total: Object.values(jenis || {}).reduce((a, b) => a + b, 0),
-      }));
-      setChartData(perBulan);
+  const chartData = useMemo(() => {
+    if (!aggData) return [];
+    return Object.entries(aggData.jenisPengajuanPerBulan || {}).map(([bulan, jenis]) => ({
+      bulan,
+      total: Object.values(jenis || {}).reduce((a, b) => a + b, 0),
+    }));
+  }, [aggData]);
 
-      // 2) fetch RAW untuk tabel (headers + rows)
-      try {
-        const rawRes = await fetch("/api/sheet?chart=raw", { cache: "no-store" });
-        const rawJson = await rawRes.json();
-        // rawJson mungkin sudah berbentuk { headers, rows } atau { raw: { headers, rows } }
-        const rawForTable = rawJson.raw
-          ? { headers: rawJson.raw.headers, rows: rawJson.raw.rows }
-          : { headers: rawJson.headers, rows: rawJson.rows };
-        // pass rawForTable ke AppTable via setDataTable (atau reuse setData jika mau)
-        setData(rawForTable); // jika kamu mau keep single state, tapi kalau cards memerlukan agregasi, gunakan state lain
-        // Jika kamu butuh tetap menyimpan agregasi di `data`, dan raw di state lain:
-        // setRawData(rawForTable);
-      } catch (e) {
-        console.warn("Gagal ambil raw sheet:", e);
-      }
-    }
-
-    fetchData();
-  }, []);
-  // --- Helper ---
+  // --- Fungsi bantu tren ---
   const calcTrendValue = (arr) => {
     if (arr.length < 2) return 0;
     const last = arr[arr.length - 1];
@@ -65,21 +54,22 @@ export default function DashboardPage() {
 
   const formatTrend = (val) => (Number.isInteger(val) ? val + "%" : val.toFixed(1) + "%");
 
-  // --- Trend pengajuan ---
   const pengajuanArr = chartData.map((item) => item.total);
   const trendPengajuanValue = calcTrendValue(pengajuanArr);
   const trendPengajuanLabel = formatTrend(trendPengajuanValue);
 
-  // --- Trend print = jumlah print dibanding total karyawan ---
   const trendPrintValue = totalKaryawan > 0 ? (totalPrint / totalKaryawan) * 100 : 0;
   const trendPrintLabel = formatTrend(trendPrintValue);
 
-  if (!data) return <p className="p-10 text-center">Loading...</p>;
+  // --- Conditional Rendering (di akhir, setelah semua hooks) ---
+  if (aggError || rawError)
+    return <p className="p-10 text-center text-red-500">Gagal memuat data.</p>;
+  if (!aggData || !rawData) return <p className="p-10 text-center">Loading...</p>;
 
+  // --- Render utama ---
   return (
     <>
       <div className="grid auto-rows-fr gap-2 md:grid-cols-3">
-        {/* Cards */}
         <CardSummaryTotal
           totalKaryawan={totalKaryawan}
           trendValue={trendPengajuanValue}
@@ -93,8 +83,7 @@ export default function DashboardPage() {
         <AppBarChart data={chartData} />
       </div>
       <div className="bg-muted/50 min-h-[100vh] flex-1 rounded-xl md:min-h-min">
-        {/* Table (contoh sederhana) */}
-        <AppTable data={data} />
+        <AppTable data={rawData} />
       </div>
     </>
   );
