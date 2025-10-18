@@ -29,8 +29,9 @@ export function NavMain({ items, isCollapsed }) {
               key={item.title}
               href={item.url}
               className={cn(
-                "hover:bg-accent hover:text-accent-foreground flex items-center gap-2 rounded-md px-3 py-2 text-sm",
-                mounted && pathname === item.url && "bg-accent text-accent-foreground"
+                "hover:bg-accent hover:text-accent-foreground flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm",
+                mounted && pathname === item.url && "bg-accent text-accent-foreground",
+                isCollapsed ? "justify-center px-2 py-2" : "gap-2 px-3 py-2"
               )}
             >
               {item.icon && <item.icon className="h-4 w-4" />}

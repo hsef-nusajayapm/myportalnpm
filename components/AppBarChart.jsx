@@ -18,7 +18,7 @@ export function AppBarChart({ data }) {
   };
 
   return (
-    <Card className="aspect-video gap-2 rounded-lg">
+    <Card className="aspect-video gap-3 rounded-lg">
       <CardHeader>
         <CardDescription>Total Data Pengajuan</CardDescription>
       </CardHeader>
@@ -31,18 +31,18 @@ export function AppBarChart({ data }) {
             accessibilityLayer
             data={data}
             margin={{
-              top: 15,
+              top: 20,
               left: 5,
               right: 5,
-              bottom: 5,
+              bottom: 10,
             }}
-            barCategoryGap="20%"
+            barCategoryGap="21%"
             barGap={8}
           >
             <CartesianGrid vertical={false} strokeDasharray="3 3" />
             <XAxis
               dataKey="bulan"
-              height={15}
+              height={12}
               tickMargin={6}
               axisLine={true}
               tickLine={false}
@@ -67,7 +67,7 @@ export function AppBarChart({ data }) {
                 dataKey="total"
                 position="top"
                 className="fill-foreground text-black"
-                fontSize={10}
+                fontSize={12}
               />
             </Bar>
           </BarChart>

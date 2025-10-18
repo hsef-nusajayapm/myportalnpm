@@ -69,7 +69,7 @@ export default function DashboardPage() {
   // --- Render utama ---
   return (
     <>
-      <div className="grid auto-rows-fr gap-2 md:grid-cols-3">
+      <div className="grid auto-rows-fr gap-2 pt-2 md:grid-cols-3">
         <CardSummaryTotal
           totalKaryawan={totalKaryawan}
           trendValue={trendPengajuanValue}
@@ -82,8 +82,10 @@ export default function DashboardPage() {
         />
         <AppBarChart data={chartData} />
       </div>
-      <div className="bg-muted/50 min-h-[100vh] flex-1 rounded-xl md:min-h-min">
-        <AppTable data={rawData} />
+      <div className="bg-muted/50 flex min-h-screen max-w-full flex-1 justify-center rounded-xl md:min-h-min">
+        <div className="flex max-w-full flex-1 flex-col justify-center">
+          <AppTable data={rawData} />
+        </div>
       </div>
     </>
   );

@@ -3,7 +3,7 @@
 import * as React from "react";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Bot, SquareTerminal } from "lucide-react";
+import { Bot, SquareTerminal, BookOpenText } from "lucide-react";
 
 import { NavMain } from "@/components/shad-old/nav-main";
 import { NavUser } from "@/components/shad-old/nav-user";
@@ -63,7 +63,14 @@ export function AppSidebar(props) {
         { title: "Commissioning", url: "/dashboard/commissioning" },
         { title: "Visitor & Temporary Work", url: "/dashboard/visitor" },
         { title: "Escort", url: "/dashboard/escort" },
+        // { title: "Other", url: "/dashboard/minepermit1" },
       ],
+    },
+    {
+      title: "Basic Knowledge",
+      icon: BookOpenText,
+      isActive: true,
+      url: "/dashboard/basic-knowledge",
     },
   ];
 
