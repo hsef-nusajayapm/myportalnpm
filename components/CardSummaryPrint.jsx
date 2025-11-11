@@ -16,7 +16,7 @@ export function CardSummaryPrint({ totalPrint, trendValue, trendLabel }) {
     <Card className="h-full">
       <CardHeader>
         <CardDescription>Total Cetak ID Card</CardDescription>
-        <CardTitle className="text-4xl font-semibold tabular-nums @[250px]:text-5xl">
+        <CardTitle className="text-5xl font-semibold tabular-nums @[250px]:text-6xl">
           {totalPrint}
         </CardTitle>
         <CardAction>

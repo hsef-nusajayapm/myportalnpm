@@ -70,7 +70,7 @@ export function AppBarChart({ data }) {
             <BarChart
               accessibilityLayer
               data={filteredData}
-              margin={{ top: 20, left: 5, right: 5, bottom: 10 }}
+              margin={{ top: 20, left: 10, right: 10, bottom: 10 }}
               barCategoryGap="18%" // lebih rapat antar bar
               barGap={2} // jarak antar batang dalam satu kategori
             >
