@@ -10,7 +10,7 @@ export default function MinePermitPage() {
           data-tally-src="https://tally.so/embed/mOqMG7?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1"
           loading="lazy"
           width="85%"
-          height="1600"
+          height="1650"
           frameBorder={0}
           marginHeight={0}
           marginWidth={0}
