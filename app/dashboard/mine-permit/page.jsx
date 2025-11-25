@@ -7,7 +7,7 @@ export default function MinePermitPage() {
       <h1 className="mb-2 text-center text-2xl font-bold">Form Mine Permit & SIMPER</h1>
       <div className="mb-2 flex items-center justify-center">
         <iframe
-          data-tally-src="https://tally.so/embed/mOqMG7?alignLeft=1&hideTitle=1&dynamicHeight=1"
+          data-tally-src="https://tally.so/embed/mOqMG7?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1"
           loading="lazy"
           width="85%"
           height="1650"
